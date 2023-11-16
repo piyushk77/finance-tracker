@@ -1,0 +1,19 @@
+{
+  "name": "finance-tracker-backend",
+  "version": "1.0.0",
+  "description": "Web application to track and manage expenditure. This is the backend division of the personal finance tracker application under the ethnus-mern internship project.",
+  "main": "server.js",
+  "scripts": {
+    "start": "nodemon server.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "dotenv": "^16.3.1",
+    "express": "^4.18.2",
+    "jsonwebtoken": "^9.0.2",
+    "mongoose": "^8.0.1",
+    "nodemon": "^3.0.1"
+  }
+}
