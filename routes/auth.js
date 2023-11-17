@@ -59,9 +59,9 @@ router.post('/register', async (req, res) => {
         total: 0,
       },
       budget: {
-        type: '',
+        budget_type: "",
         amount: null,
-        description: '',
+        description: "",
       },
     });
 

@@ -1,11 +1,10 @@
 const mongoose = require('mongoose');
 
 const transactionSchema = new mongoose.Schema({
-  id: String,
+  _id: mongoose.Schema.Types.ObjectId,
   category: String,
   date: Date,
-  income: Number,
-  expense: Number,
+  amount: Number,
   payment_method: String,
   currency: String,
   description: String,
@@ -36,7 +35,7 @@ const financialMetricsSchema = new mongoose.Schema({
     total: Number,
   },
   budget: {
-    type: String,
+    budget_type: String,
     amount: Number,
     description: String,
   },
