@@ -34,12 +34,35 @@ router.post('/register', async (req, res) => {
 
     await newUser.save();
 
-    // Create a corresponding financial metrics entry
     const newFinancialMetrics = new FinancialMetrics({
       userId: newUser._id,
-      income: 0,
-      expenses: 0,
-      // ... other fields
+      username: newUser.username,
+      email: newUser.email,
+      income: {
+        this_week: 0,
+        this_month: 0,
+        this_year: 0,
+        total: 0,
+        transactions: [],
+      },
+      expense: {
+        this_week: 0,
+        this_month: 0,
+        this_year: 0,
+        total: 0,
+        transactions: [],
+      },
+      savings: {
+        this_week: 0,
+        this_month: 0,
+        this_year: 0,
+        total: 0,
+      },
+      budget: {
+        type: '',
+        amount: null,
+        description: '',
+      },
     });
 
     await newFinancialMetrics.save();
