@@ -14,7 +14,7 @@ app.use(bodyParser.json());
 
 // Routes
 app.use('/api/auth', require('./routes/auth'));
-app.use('/api/dashboard', require('./routes/dashboard')); 
+app.use('/api/user', require('./routes/user')); 
 
 // Start server
 app.listen(PORT, () => {
