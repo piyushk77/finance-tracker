@@ -59,7 +59,7 @@ function calculateAmountInRange(transactions, startDate, endDate) {
 
   return transactions
     .filter(transaction => {
-      const inputDate = DateTime.fromFormat(transaction.date, "yyyy-MM-d");
+      const inputDate = DateTime.fromFormat(transaction.date, "yyyy-MM-dd");
       // Convert to IST
       const istDate = inputDate.setZone('Asia/Kolkata');
       return istDate >= startDate && istDate <= endDate;
