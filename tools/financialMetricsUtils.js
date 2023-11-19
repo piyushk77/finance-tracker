@@ -1,5 +1,4 @@
 const { DateTime } = require('luxon');
-const moment = require('moment-timezone');
 
 function calculateExpenseMetrics(financialMetrics) {
   const currentDate = DateTime.local().setZone('ist');
@@ -60,31 +59,10 @@ function calculateAmountInRange(transactions, startDate, endDate) {
 
   return transactions
     .filter(transaction => {
-
-      const dateStr = "2023-11-1";
-      const timeZone = "UTC";
-
-      // Parse the string and set the time zone
-      const dateObject = moment.tz(dateStr, timeZone);
-
-      console.log(dateObject.toISOString());
-
-
-      // const dateStr = transaction.date;
-      // const [year, month, day] = dateStr.split('-');
-
-      // const dateObject = new Date(year, month - 1, day);
-
-      // // Set the time to midnight UTC
-      // dateObject.setUTCHours(0, 0, 0, 0);
-
-      // console.log(dateObject);
-
-      const mongoDate = new Date(transaction.date);
-      const isoString = mongoDate.toISOString();
-      const dateString = isoString.substring(0, 10);
-      const luxonDate = DateTime.fromISO(dateString, { zone: 'ist' });
-      return luxonDate >= startDate && luxonDate <= endDate;
+      const inputDate = DateTime.fromFormat(transaction.date, "yyyy-MM-d");
+      // Convert to IST
+      const istDate = inputDate.setZone('Asia/Kolkata');
+      return istDate >= startDate && istDate <= endDate;
     })
     .reduce((total, transaction) => {
       return total + transaction.amount;
