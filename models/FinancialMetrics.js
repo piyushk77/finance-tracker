@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 const transactionSchema = new mongoose.Schema({
   _id: mongoose.Schema.Types.ObjectId,
   category: String,
-  date: Date,
+  date: String,
   amount: Number,
   payment_method: String,
   currency: String,

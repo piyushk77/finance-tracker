@@ -56,6 +56,10 @@ router.post('/setExpense', authMiddleware, async (req, res) => {
     financialMetrics.expense.this_month = expenseMetrics.thisMonthExpenses;
     financialMetrics.expense.this_year = expenseMetrics.thisYearExpenses;
     financialMetrics.expense.total = expenseMetrics.totalExpenses;
+    financialMetrics.savings.this_week = expenseMetrics.thisWeekSavings;
+    financialMetrics.savings.this_month = expenseMetrics.thisMonthSavings;
+    financialMetrics.savings.this_year = expenseMetrics.thisYearSavings;
+    financialMetrics.savings.total = expenseMetrics.totalSavings;
 
     await financialMetrics.save();
 
@@ -98,6 +102,10 @@ router.post('/setIncome', authMiddleware, async (req, res) => {
     financialMetrics.income.this_month = incomeMetrics.thisMonthIncome;
     financialMetrics.income.this_year = incomeMetrics.thisYearIncome;
     financialMetrics.income.total = incomeMetrics.totalIncome;
+    financialMetrics.savings.this_week = incomeMetrics.thisWeekSavings;
+    financialMetrics.savings.this_month = incomeMetrics.thisMonthSavings;
+    financialMetrics.savings.this_year = incomeMetrics.thisYearSavings;
+    financialMetrics.savings.total = incomeMetrics.totalSavings;
 
     await financialMetrics.save();
 
