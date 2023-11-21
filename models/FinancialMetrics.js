@@ -100,6 +100,7 @@ const financialMetricsSchema = new mongoose.Schema({
   budget: {
     budget_type: String,
     amount: Number,
+    percentage_alert: Number,
     description: String,
   },
 });

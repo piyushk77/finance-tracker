@@ -77,7 +77,7 @@ router.post('/setExpense', authMiddleware, async (req, res) => {
     await financialMetrics.save();
 
     const savings = calculateSavings(financialMetrics);
-    
+
     financialMetrics.savings.weekly = { ...savings.weekly };
     financialMetrics.savings.monthly = { ...savings.monthly };
 
@@ -143,13 +143,44 @@ router.post('/setIncome', authMiddleware, async (req, res) => {
     await financialMetrics.save();
 
     const savings = calculateSavings(financialMetrics);
-  
+
     financialMetrics.savings.weekly = { ...savings.weekly };
     financialMetrics.savings.monthly = { ...savings.monthly };
 
     await financialMetrics.save();
 
     res.status(201).json({ message: 'Income added successfully' });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Internal Server Error' });
+  }
+});
+
+router.post('/setBudget', authMiddleware, async (req, res) => {
+  try {
+    const userId = req.userId;
+    const { budget_type, amount, percentage_alert, description, } = req.body;
+
+    // Find the financial metrics entry for the user
+    const financialMetrics = await FinancialMetrics.findOne({ userId });
+
+    if (!financialMetrics) {
+      return res.status(404).json({ message: 'Financial metrics not found for the user' });
+    }
+
+    // Create a new income transaction...
+    const budget = {
+      budget_type, 
+      amount, 
+      percentage_alert, 
+      description,
+    };
+
+    financialMetrics.budget = { ...budget };
+
+    await financialMetrics.save();
+
+    res.status(201).json({ message: 'Budget added successfully' });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: 'Internal Server Error' });
