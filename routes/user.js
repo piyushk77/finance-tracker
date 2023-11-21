@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const authMiddleware = require('../middleware/auth');
 const FinancialMetrics = require('../models/FinancialMetrics');
-const { calculateExpenseMetrics, calculateIncomeMetrics } = require('../tools/financialMetricsUtils');
+const { calculateExpenseMetrics, calculateIncomeMetrics, calculateSavings } = require('../tools/financialMetricsUtils');
 
 
 // Protected route - requires authentication
@@ -29,6 +29,10 @@ router.post('/setExpense', authMiddleware, async (req, res) => {
     const userId = req.userId;
     const { category, date, amount, payment_method, currency, description } = req.body;
 
+    // Preprocess the date
+
+    const formattedDate = convertDateFormat(date);
+
     // Find the financial metrics entry for the user
     const financialMetrics = await FinancialMetrics.findOne({ userId });
 
@@ -39,7 +43,7 @@ router.post('/setExpense', authMiddleware, async (req, res) => {
     // Create a new expense transaction
     const newExpenseTransaction = {
       category,
-      date,
+      date: formattedDate,
       amount,
       payment_method,
       currency,
@@ -61,6 +65,22 @@ router.post('/setExpense', authMiddleware, async (req, res) => {
     financialMetrics.savings.this_year = expenseMetrics.thisYearSavings;
     financialMetrics.savings.total = expenseMetrics.totalSavings;
 
+    // Update weekly and monthly values
+    expenseMetrics.weeklyExpenses.then((resolvedValue) => {
+      financialMetrics.expense.weekly = { ...resolvedValue };
+    });
+
+    expenseMetrics.monthlyExpenses.then((resolvedValue) => {
+      financialMetrics.expense.monthly = { ...resolvedValue };
+    });
+
+    await financialMetrics.save();
+
+    const savings = calculateSavings(financialMetrics);
+    
+    financialMetrics.savings.weekly = { ...savings.weekly };
+    financialMetrics.savings.monthly = { ...savings.monthly };
+
     await financialMetrics.save();
 
     res.status(201).json({ message: 'Expense added successfully' });
@@ -75,6 +95,10 @@ router.post('/setIncome', authMiddleware, async (req, res) => {
     const userId = req.userId;
     const { category, date, amount, payment_method, currency, description } = req.body;
 
+    // Preprocess the date
+
+    const formattedDate = convertDateFormat(date);
+
     // Find the financial metrics entry for the user
     const financialMetrics = await FinancialMetrics.findOne({ userId });
 
@@ -85,7 +109,7 @@ router.post('/setIncome', authMiddleware, async (req, res) => {
     // Create a new income transaction...
     const newIncomeTransaction = {
       category,
-      date,
+      date: formattedDate,
       amount,
       payment_method,
       currency,
@@ -95,7 +119,7 @@ router.post('/setIncome', authMiddleware, async (req, res) => {
     financialMetrics.income.transactions.push(newIncomeTransaction);
 
     await financialMetrics.save();
-    
+
     const incomeMetrics = calculateIncomeMetrics(financialMetrics);
 
     financialMetrics.income.this_week = incomeMetrics.thisWeekIncome;
@@ -107,13 +131,37 @@ router.post('/setIncome', authMiddleware, async (req, res) => {
     financialMetrics.savings.this_year = incomeMetrics.thisYearSavings;
     financialMetrics.savings.total = incomeMetrics.totalSavings;
 
+    // Update weekly and monthly values
+    incomeMetrics.weeklyIncome.then((resolvedValue) => {
+      financialMetrics.income.weekly = { ...resolvedValue };
+    });
+
+    incomeMetrics.monthlyIncome.then((resolvedValue) => {
+      financialMetrics.income.monthly = { ...resolvedValue };
+    });
+
     await financialMetrics.save();
 
-    res.status(201).json({ message: 'Income added successfully'});
+    const savings = calculateSavings(financialMetrics);
+  
+    financialMetrics.savings.weekly = { ...savings.weekly };
+    financialMetrics.savings.monthly = { ...savings.monthly };
+
+    await financialMetrics.save();
+
+    res.status(201).json({ message: 'Income added successfully' });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: 'Internal Server Error' });
   }
 });
+
+function convertDateFormat(inputDate) {
+  const date = new Date(inputDate);
+  const year = date.getFullYear();
+  const month = (date.getMonth() + 1).toString().padStart(2, '0'); // Ensure two digits for month
+  const day = date.getDate().toString().padStart(2, '0'); // Ensure two digits for day
+  return `${year}-${month}-${day}`;
+}
 
 module.exports = router;
