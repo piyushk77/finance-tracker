@@ -3,6 +3,7 @@ const router = express.Router();
 const authMiddleware = require('../middleware/auth');
 const FinancialMetrics = require('../models/FinancialMetrics');
 const { calculateExpenseMetrics, calculateIncomeMetrics, calculateSavings } = require('../tools/financialMetricsUtils');
+const { checkBudget } = require('../tools/checkBudget');
 
 
 // Protected route - requires authentication
@@ -83,6 +84,8 @@ router.post('/setExpense', authMiddleware, async (req, res) => {
 
     await financialMetrics.save();
 
+    checkBudget(financialMetrics);
+
     res.status(201).json({ message: 'Expense added successfully' });
   } catch (error) {
     console.error(error);
@@ -149,6 +152,8 @@ router.post('/setIncome', authMiddleware, async (req, res) => {
 
     await financialMetrics.save();
 
+    checkBudget(financialMetrics);
+
     res.status(201).json({ message: 'Income added successfully' });
   } catch (error) {
     console.error(error);
@@ -172,13 +177,15 @@ router.post('/setBudget', authMiddleware, async (req, res) => {
     const budget = {
       budget_type, 
       amount, 
-      percentage_alert, 
+      percentage_alert,
       description,
     };
 
     financialMetrics.budget = { ...budget };
 
     await financialMetrics.save();
+
+    checkBudget(financialMetrics);
 
     res.status(201).json({ message: 'Budget added successfully' });
   } catch (error) {

@@ -154,7 +154,7 @@ const calculateWeeklyAmount = async (Transactions, startDate, endDate) => {
   transactions.forEach(transaction => {
     const transactionDate = new Date(transaction.date);
     const formattedStartDate = new Date(startDate);
-    const week = Math.ceil((transactionDate.getDate() + formattedStartDate.getDay()) / 7);
+    const week = Math.ceil((transactionDate.getDate() + formattedStartDate.getDay() - 1) / 7);
 
     // Check if the amount is a valid number
     const transactionAmount = Number(transaction.amount);

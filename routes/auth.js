@@ -4,7 +4,6 @@ const User = require('../models/User');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const secretKey = process.env.JWT_SECRET_KEY;
-
 const FinancialMetrics = require('../models/FinancialMetrics');
 
 router.post('/register', async (req, res) => {
