@@ -7,6 +7,7 @@ Web application to track and manage expenditure. This is the backend division of
 + MongoDB (Mongoose)
 + JsonWebToken (JWT)
 + BcryptJS
++ Nodemailer (email notifications)
 
 ## For Collaborators:
 
